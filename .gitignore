@@ -1,0 +1,21 @@
+# build scratch
+*.tmp
+*.bak
+*.orig
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# editors
+.vscode/
+.idea/
+*.swp
+
+# os
+.DS_Store
+Thumbs.db
+
+# superseded single-file builds — index.html is the one that ships
+india-capability-ledger-v*.html

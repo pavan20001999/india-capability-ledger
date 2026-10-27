@@ -1,0 +1,57 @@
+name: Correction
+description: A line in the ledger is wrong, stale, or missing a source
+title: "[correction] "
+labels: ["correction"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Corrections are the most useful contribution to this ledger. Please name the
+        specific line rather than the general area, so the fix is unambiguous.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of correction
+      options:
+        - Tier call (A / B / C / Z) is wrong
+        - "No Indian entrant" claim is out of date
+        - Barrier tag is wrong (DECISION / QUALIFICATION / CAPITAL / TECHNOLOGY)
+        - Core technology description is wrong or imprecise
+        - Ownership has changed (acquisition, divestment, stake)
+        - Figure is wrong or stale
+        - A company or product line is missing
+        - Something else
+    validations:
+      required: true
+
+  - type: input
+    id: where
+    attributes:
+      label: Which entry
+      description: Company and product line, or chokepoint, or core technology — as it appears in the ledger.
+      placeholder: "Analog Devices / Precision data converters"
+    validations:
+      required: true
+
+  - type: textarea
+    id: says
+    attributes:
+      label: What it currently says
+    validations:
+      required: true
+
+  - type: textarea
+    id: should
+    attributes:
+      label: What it should say
+    validations:
+      required: true
+
+  - type: textarea
+    id: source
+    attributes:
+      label: Source
+      description: A filing, an announcement, a product page, a datasheet. A claim without one is hard to act on.
+    validations:
+      required: true

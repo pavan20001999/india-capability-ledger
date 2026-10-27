@@ -1,0 +1,40 @@
+name: build and check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build index.html from src
+        run: node build.js
+
+      - name: Run checks
+        run: node test.js
+
+      - name: Fail if index.html is out of date with src
+        run: |
+          if ! git diff --quiet -- index.html; then
+            echo "::error::index.html does not match src/. Run 'node build.js' and commit the result."
+            git diff --stat -- index.html
+            exit 1
+          fi
+
+      - name: Export data and confirm it is current
+        run: |
+          node export.js
+          if ! git diff --quiet -- data/; then
+            echo "::error::data/ does not match src/data.js. Run 'node export.js' and commit the result."
+            git diff --stat -- data/
+            exit 1
+          fi

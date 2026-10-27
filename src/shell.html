@@ -1,0 +1,620 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>India Capability Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#080d16;
+  --card:#131c2d;
+  --card-hi:#1a2540;
+  --rule:#223052;
+  --rule-soft:#1a2438;
+  --ink:#eef2f9;
+  --ink-dim:#9aabc6;
+  --ink-faint:#647498;
+  --accent:#74a9ff;
+  --tierA:#3fd6a0;
+  --tierB:#f5b74e;
+  --gap:#f4707a;
+  --mat:#b98cf0;
+  --r:14px;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+  --shadow-hi:0 2px 4px rgba(0,0,0,.4), 0 18px 40px -16px rgba(0,0,0,.8);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;color:var(--ink);
+  background:
+    radial-gradient(1100px 620px at 12% -8%, rgba(116,169,255,.13), transparent 62%),
+    radial-gradient(900px 520px at 92% 4%, rgba(63,214,160,.07), transparent 60%),
+    var(--ground);
+  background-attachment:fixed;
+  font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:14px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,.disp{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.03em;margin:0}
+.mono{font-family:'IBM Plex Mono',monospace}
+.shell{max-width:1360px;margin:0 auto;padding:0 20px}
+
+/* ---------- masthead ---------- */
+header{padding:38px 0 4px}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.2em;
+  color:var(--accent);text-transform:uppercase;display:flex;align-items:center;gap:9px}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--accent);opacity:.6}
+h1{font-size:clamp(38px,7.5vw,76px);font-weight:700;line-height:.9;margin:14px 0 14px;
+  background:linear-gradient(180deg,#fff 20%,#a9bcdd 130%);-webkit-background-clip:text;
+  background-clip:text;color:transparent}
+.thesis{max-width:64ch;color:var(--ink-dim);font-size:15px;margin:0 0 28px}
+.thesis b{color:var(--ink);font-weight:600}
+
+/* ---------- stat cards ---------- */
+.counters{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin-bottom:30px}
+.ctr{background:linear-gradient(160deg,var(--card),rgba(19,28,45,.55));border:1px solid var(--rule-soft);
+  border-radius:var(--r);padding:16px 17px 15px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.ctr::after{content:"";position:absolute;inset:0 0 auto 0;height:2px;
+  background:linear-gradient(90deg,var(--accent),transparent 72%);opacity:.55}
+.ctr .n{font-family:'Barlow Condensed',sans-serif;font-size:42px;font-weight:600;line-height:1}
+.ctr .l{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-faint);margin-top:6px;line-height:1.5}
+
+/* ---------- search ---------- */
+.searchbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.searchbar input{flex:1 1 340px;min-width:220px;background:var(--card);border:1px solid var(--rule);
+  color:var(--ink);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:14px 16px;
+  border-radius:var(--r);box-shadow:var(--shadow)}
+.searchbar input::placeholder{color:var(--ink-faint)}
+.searchbar input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(116,169,255,.16)}
+.clear{background:var(--card);border:1px solid var(--rule);color:var(--ink-dim);
+  font-family:'IBM Plex Mono',monospace;font-size:11px;padding:12px 15px;border-radius:var(--r);cursor:pointer}
+.clear:hover{color:var(--ink);border-color:var(--accent)}
+.hint{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink-faint);letter-spacing:.04em}
+
+/* ---------- tabs ---------- */
+nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
+.tab{background:var(--card);border:1px solid var(--rule-soft);border-radius:999px;color:var(--ink-faint);
+  font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.05em;
+  font-size:15px;font-weight:600;padding:9px 17px;cursor:pointer;transition:all .15s ease}
+.tab:hover{color:var(--ink-dim);border-color:var(--rule)}
+.tab[aria-selected="true"]{color:#0a1120;background:linear-gradient(180deg,#9dc2ff,var(--accent));border-color:transparent}
+.tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tab .bdg{display:inline-block;margin-left:7px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;
+  letter-spacing:.04em;padding:1px 6px;border-radius:999px;background:rgba(255,255,255,.09);
+  color:var(--ink-dim);vertical-align:1px}
+.tab[aria-selected="true"] .bdg{background:rgba(8,17,32,.22);color:#0a1120}
+.tab.dim{opacity:.42}
+.tab.dim .bdg{background:rgba(255,255,255,.05)}
+
+main{padding-bottom:40px}
+.view[hidden]{display:none}
+
+/* ---------- controls ---------- */
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:20px}
+select{background:var(--card);border:1px solid var(--rule);color:var(--ink);
+  font-family:'IBM Plex Mono',monospace;font-size:12px;padding:9px 12px;border-radius:999px}
+select:focus{outline:none;border-color:var(--accent)}
+.chip{background:var(--card);border:1px solid var(--rule-soft);color:var(--ink-faint);
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.07em;
+  padding:9px 14px;border-radius:999px;cursor:pointer;text-transform:uppercase;transition:all .15s ease}
+.chip:hover{border-color:var(--rule);color:var(--ink-dim)}
+.chip[aria-pressed="true"]{color:var(--ink);border-color:currentColor}
+.chip.a[aria-pressed="true"]{color:var(--tierA);background:rgba(63,214,160,.1);border-color:rgba(63,214,160,.4)}
+.chip.c[aria-pressed="true"]{color:var(--tierB);background:rgba(245,183,78,.1);border-color:rgba(245,183,78,.4)}
+.chip.ce[aria-pressed="true"]{color:#ff9db0;background:rgba(255,157,176,.1);border-color:rgba(255,157,176,.45)}
+.card.chae::after{content:"Chaebol";position:absolute;top:13px;right:14px;
+  font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.11em;text-transform:uppercase;
+  color:#ff9db0;background:rgba(255,157,176,.12);border:1px solid rgba(255,157,176,.35);
+  padding:2px 7px;border-radius:999px}
+.card.chae .top{padding-right:78px}
+.chip.ta[aria-pressed="true"]{color:var(--tierA);background:rgba(63,214,160,.1);border-color:rgba(63,214,160,.4)}
+.chip.tb[aria-pressed="true"]{color:var(--tierB);background:rgba(245,183,78,.1);border-color:rgba(245,183,78,.4)}
+.chip.tc[aria-pressed="true"]{color:var(--mat);background:rgba(185,140,240,.1);border-color:rgba(185,140,240,.4)}
+.chip.tz[aria-pressed="true"]{color:var(--gap);background:rgba(244,112,122,.1);border-color:rgba(244,112,122,.4)}
+.tiercount{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
+.tiercount span{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.08em;
+  padding:2px 7px;border-radius:999px;border:1px solid currentColor}
+.tiercount span.A{color:var(--tierA);background:rgba(63,214,160,.09)}
+.tiercount span.B{color:var(--tierB);background:rgba(245,183,78,.09)}
+.tiercount span.C{color:var(--mat);background:rgba(185,140,240,.09)}
+.tiercount span.Z{color:var(--gap);background:rgba(244,112,122,.09)}
+.chip.k[aria-pressed="true"]{color:var(--steel,#74a9ff);background:rgba(116,169,255,.1);border-color:rgba(116,169,255,.45)}
+.card.kei::after{content:"Keiretsu";position:absolute;top:13px;right:14px;
+  font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--accent);background:rgba(116,169,255,.12);border:1px solid rgba(116,169,255,.35);
+  padding:2px 7px;border-radius:999px}
+.card.kei .top{padding-right:80px}
+.mir .st{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;
+  padding:3px 8px;border-radius:999px;white-space:nowrap;border:1px solid currentColor}
+.mir .st.yes{color:var(--tierA);background:rgba(63,214,160,.1)}
+.mir .st.part{color:var(--tierB);background:rgba(245,183,78,.1)}
+.mir .st.no{color:var(--gap);background:rgba(244,112,122,.1)}
+#detailLayer{animation:fade .18s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.crumbs{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 22px;
+  padding-bottom:14px;border-bottom:1px solid var(--rule-soft)}
+.crumbs button{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;
+  text-transform:uppercase;padding:6px 12px;border-radius:999px;border:1px solid var(--rule);
+  background:transparent;color:var(--ink-dim);cursor:pointer}
+.crumbs button:hover{border-color:var(--accent);color:var(--accent)}
+.crumbs span.sep{color:var(--ink-faint);font-size:11px}
+.crumbs span.here{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--accent);padding:6px 2px}
+.dhead{margin:0 0 6px}
+.dhead h2{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:600;
+  letter-spacing:.01em;line-height:1.05;margin:0}
+.dhead .meta{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-faint);margin-top:8px}
+.dhead .lead{font-size:14.5px;line-height:1.62;color:var(--ink-dim);margin:16px 0 0;max-width:78ch}
+.navcard{cursor:pointer}
+.navcard:hover{border-color:var(--accent)}
+.linkrow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}
+.linkrow button{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;
+  text-transform:uppercase;padding:5px 11px;border-radius:999px;border:1px solid var(--rule);
+  background:transparent;color:var(--ink-dim);cursor:pointer}
+.linkrow button:hover{border-color:var(--accent);color:var(--accent)}
+.prow{border:1px solid var(--rule-soft);border-radius:var(--r);padding:15px 17px;background:var(--panel);margin-bottom:9px}
+.prow .pt{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:9px}
+.prow .pt h5{font-size:14.5px;font-weight:600;margin:0;letter-spacing:-.005em}
+.prow .kv3{display:grid;grid-template-columns:118px 1fr;gap:5px 13px;font-size:12.6px;color:var(--ink-dim)}
+.prow .kv3 dt{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-faint);padding-top:3px}
+.icard.ind{cursor:pointer;transition:border-color .16s,transform .16s}
+.icard.ind:hover{border-color:var(--accent);transform:translateY(-2px)}
+.icard.ind .big{font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:600;line-height:1;margin:2px 0 0}
+.icard.ind .big.hi{color:var(--tierA)} .icard.ind .big.mid{color:var(--tierB)} .icard.ind .big.lo{color:var(--gap)}
+.icard.ind .sub{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-faint);margin-bottom:11px}
+.icard.ind .mini{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-dim);
+  padding-top:10px;border-top:1px solid var(--rule-soft)}
+.icard.ind .mini b{font-family:'IBM Plex Mono',monospace;color:var(--ink);font-weight:500}
+.backbar{display:flex;align-items:center;gap:14px;margin:0 0 20px}
+.backbtn{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  padding:7px 13px;border-radius:999px;border:1px solid var(--rule);background:transparent;
+  color:var(--ink-dim);cursor:pointer}
+.backbtn:hover{border-color:var(--accent);color:var(--accent)}
+.indtitle{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:600;letter-spacing:.01em;margin:0}
+.sect.tierA{color:#2f7d4f;border-color:#2f7d4f}
+.sect.tierC{color:#8a6d1f;border-color:#8a6d1f}
+.sect.tierB{color:#8c3b3b;border-color:#8c3b3b}
+.sect.tierZ{color:var(--ink-faint);border-color:var(--rule)}
+.tierlede{font-size:12.6px;line-height:1.6;color:var(--ink-faint);margin:-6px 0 14px;max-width:70ch}
+.sect{margin:34px 0 10px;font-size:13px;letter-spacing:.11em;text-transform:uppercase;
+  font-family:'IBM Plex Mono',monospace;color:var(--accent);
+  padding-bottom:7px;border-bottom:1px solid var(--rule-soft)}
+.sect span{float:right;color:var(--ink-faint);letter-spacing:.06em}
+.statrow{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 6px}
+.statrow .s{flex:1 1 128px;border:1px solid var(--rule-soft);border-radius:var(--r);padding:12px 14px;background:var(--panel)}
+.statrow .s .v{font-family:'Barlow Condensed',sans-serif;font-size:27px;font-weight:600;line-height:1}
+.statrow .s .k{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-faint);margin-top:3px}
+.regcard .big{font-family:'Barlow Condensed',sans-serif;font-size:38px;font-weight:600;line-height:1;margin:4px 0 2px}
+.regcard .sub{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-faint);margin-bottom:12px}
+.regcard .kv2{display:grid;grid-template-columns:1fr auto;gap:5px 10px;font-size:12.6px;color:var(--ink-dim);
+  padding-top:11px;border-top:1px solid var(--rule-soft)}
+.regcard .kv2 b{font-family:'IBM Plex Mono',monospace;color:var(--ink);font-weight:500}
+.monoline{font-size:12.6px;color:var(--ink-dim);padding:6px 0;border-bottom:1px solid var(--rule-soft)}
+.monoline:last-child{border-bottom:0}
+.monoline b{color:var(--ink);font-weight:500}
+.monoline i{font-style:normal;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.1em;
+  text-transform:uppercase;padding:1px 6px;border-radius:999px;margin-left:6px;border:1px solid currentColor}
+.monoline i.M{color:#ff8a8a;background:rgba(255,138,138,.12)}
+.monoline i.D{color:var(--gap);background:rgba(244,112,122,.1)}
+.mdl .col{margin:0 0 9px;font-size:12.8px;color:var(--ink-dim);padding-left:11px;border-left:2px solid var(--rule-soft)}
+.mdl .col b{display:block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--ink-faint);margin-bottom:3px;font-weight:500}
+.mdl .col.ind{border-left-color:var(--accent);color:var(--ink)}
+.mdl .col.ind b{color:var(--accent)}
+.tbl td.num{font-family:'IBM Plex Mono',monospace;text-align:right;white-space:nowrap}
+.tbl td.crit{color:var(--gap);font-weight:600}
+.bar{display:flex;height:9px;border-radius:999px;overflow:hidden;background:var(--rule-soft);margin:9px 0 8px}
+.bar i.A{background:var(--tierA)} .bar i.B{background:var(--tierB)}
+.bar i.C{background:var(--mat)} .bar i.Z{background:var(--gap)}
+.mir .jp{font-size:12.8px;color:var(--ink-dim);margin:0 0 6px}
+.mir .jp b{color:var(--ink);font-weight:600}
+.chip.m[aria-pressed="true"]{color:var(--mat);background:rgba(185,140,240,.1);border-color:rgba(185,140,240,.4)}
+.card.mit::after{content:"Mittelstand";position:absolute;top:13px;right:14px;
+  font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--mat);background:rgba(185,140,240,.12);border:1px solid rgba(185,140,240,.35);
+  padding:2px 7px;border-radius:999px}
+.card.mit .top{padding-right:88px}
+.sectag{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;
+  padding:2px 8px;border-radius:999px;background:rgba(116,169,255,.1);color:var(--accent);
+  border:1px solid rgba(116,169,255,.3);white-space:nowrap;display:inline-block}
+.icard .ihead .sectag{margin-left:auto}
+.bar{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;
+  padding:4px 9px;border-radius:999px;border:1px solid;white-space:nowrap;flex-shrink:0}
+.bar.bD{color:#2f7d4f;border-color:#2f7d4f;background:#2f7d4f14}
+.bar.bQ{color:#8a6d1f;border-color:#8a6d1f;background:#8a6d1f14}
+.bar.bC{color:#2b5f96;border-color:#2b5f96;background:#2b5f9614}
+.bar.bT{color:#8c3b3b;border-color:#8c3b3b;background:#8c3b3b14}
+.chip.bD.on{border-color:#2f7d4f;color:#2f7d4f;background:#2f7d4f14}
+.chip.bQ.on{border-color:#8a6d1f;color:#8a6d1f;background:#8a6d1f14}
+.chip.bC.on{border-color:#2b5f96;color:#2b5f96;background:#2b5f9614}
+.chip.bT.on{border-color:#8c3b3b;color:#8c3b3b;background:#8c3b3b14}
+.barwhy{font-size:12.4px;line-height:1.6;color:var(--ink-dim);margin:11px 0 0;padding-top:11px;border-top:1px dashed var(--rule-soft)}
+.barwhy b{color:var(--ink);font-weight:600}
+.tcls{display:inline-block;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;
+  padding:3px 7px;border-radius:3px;border:1px solid;white-space:nowrap;font-weight:600}
+.tcls.cPROCESS{color:#c2703d;border-color:#c2703d55;background:#c2703d12}
+.tcls.cMATERIAL{color:#4b8f6f;border-color:#4b8f6f55;background:#4b8f6f12}
+.tcls.cPRECISION{color:#5a7fb8;border-color:#5a7fb855;background:#5a7fb812}
+.tcls.cDESIGN{color:#9a6fb0;border-color:#9a6fb055;background:#9a6fb012}
+.tcls.cSOFTWARE{color:#3f8f96;border-color:#3f8f9655;background:#3f8f9612}
+.tcls.cSTANDARD{color:#a8803c;border-color:#a8803c55;background:#a8803c12}
+.chip.cls.on{border-color:var(--accent);color:var(--accent)}
+.tcard .ihead{align-items:flex-start;gap:10px}
+.tcard h4{line-height:1.35}
+.tcard .tmeta{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin:0 0 9px}
+.tblk{margin:16px 0 0}
+.tblk h5{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-faint);
+  margin:0 0 6px;font-weight:600}
+.tblk p{margin:0;font-size:14.5px;line-height:1.62;color:var(--ink)}
+.tblk.indpos p{color:var(--ink)}
+.tblk.indpos{border-left:2px solid var(--accent);padding-left:14px}
+.clsnote{font-size:13px;line-height:1.6;color:var(--ink-faint);margin:8px 0 0;max-width:62ch}
+.corebox{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:4px;
+  padding:16px 18px;margin:18px 0 0;background:var(--card)}
+.corebox .cb-k{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-faint);
+  margin:0 0 7px;font-weight:600}
+.corebox .cb-n{font-size:16.5px;line-height:1.4;margin:0 0 10px;font-weight:600}
+.corebox .cb-n button{all:unset;cursor:pointer;color:var(--accent);text-decoration:underline;
+  text-decoration-color:transparent;transition:text-decoration-color .15s}
+.corebox .cb-n button:hover{text-decoration-color:currentColor}
+.build .where{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-faint);margin-bottom:8px}
+.build .could{font-size:13.3px;color:var(--ink);margin:0 0 9px;font-weight:500}
+.chip.z[aria-pressed="true"]{color:var(--gap);background:rgba(244,112,122,.1);border-color:rgba(244,112,122,.4)}
+.count{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-faint);margin-left:auto}
+
+/* ---------- card grid ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+.grid.wide{grid-template-columns:repeat(auto-fill,minmax(400px,1fr))}
+.card{background:linear-gradient(165deg,var(--card),rgba(16,23,38,.9));
+  border:1px solid var(--rule-soft);border-radius:var(--r);padding:19px 20px 17px;
+  cursor:pointer;text-align:left;color:inherit;font:inherit;width:100%;display:block;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;opacity:.85}
+.card.d3::before{background:linear-gradient(90deg,var(--tierA),rgba(63,214,160,0))}
+.card.d2::before{background:linear-gradient(90deg,rgba(63,214,160,.7),rgba(63,214,160,0))}
+.card.d1::before{background:linear-gradient(90deg,var(--tierB),rgba(245,183,78,0))}
+.card.d0::before{background:linear-gradient(90deg,var(--gap),rgba(244,112,122,0))}
+.card:hover{transform:translateY(-3px);border-color:var(--rule);box-shadow:var(--shadow-hi)}
+.card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:3px}
+.card h3{font-size:23px;font-weight:600;line-height:1.02}
+.pill{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;
+  padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.05);color:var(--ink-faint);white-space:nowrap;border:1px solid var(--rule-soft)}
+.sector{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.09em;
+  color:var(--accent);text-transform:uppercase;margin:6px 0 12px}
+.rev{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-dim)}
+.rev span{color:var(--ink-faint)}
+
+/* signature: capability spine */
+.spine{margin:15px 0 12px}
+.spine-track{display:flex;gap:4px;height:9px}
+.seg{flex:1;background:rgba(255,255,255,.045);border-radius:999px;border:1px solid var(--rule-soft)}
+.seg.on{border-color:transparent}
+.seg.on.s3{background:linear-gradient(90deg,var(--tierA),#5ef0bb);box-shadow:0 0 14px -3px var(--tierA)}
+.seg.on.s2{background:linear-gradient(90deg,rgba(63,214,160,.75),rgba(94,240,187,.55))}
+.seg.on.s1{background:linear-gradient(90deg,var(--tierB),#ffd085);box-shadow:0 0 14px -4px var(--tierB)}
+.spine-lab{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;
+  font-size:8.5px;letter-spacing:.1em;color:var(--ink-faint);margin-top:7px;text-transform:uppercase}
+.champ{font-size:13px;color:var(--ink-dim);margin-top:12px;padding-top:12px;border-top:1px solid var(--rule-soft);
+  display:flex;align-items:baseline;gap:7px}
+.champ .dot{width:6px;height:6px;border-radius:50%;background:var(--tierA);flex:none;
+  box-shadow:0 0 9px var(--tierA);transform:translateY(-1px)}
+.champ.none .dot{background:var(--gap);box-shadow:0 0 9px var(--gap)}
+.champ b{color:var(--ink);font-weight:600}
+
+/* ---------- content cards (gaps, champions, traps, chokes) ---------- */
+.icard{background:linear-gradient(165deg,var(--card),rgba(16,23,38,.9));border:1px solid var(--rule-soft);
+  border-radius:var(--r);padding:18px 19px 16px;box-shadow:var(--shadow);position:relative;
+  text-align:left;color:inherit;font:inherit;width:100%;display:block;
+  transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+button.icard{cursor:pointer}
+button.icard:hover{transform:translateY(-3px);border-color:var(--rule);box-shadow:var(--shadow-hi)}
+button.icard:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.icard .ihead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:9px}
+.icard h4{font-size:19px;font-weight:600;line-height:1.08}
+.icard .body{font-size:13.3px;color:var(--ink-dim);margin:0}
+.icard .foot{margin-top:12px;padding-top:11px;border-top:1px solid var(--rule-soft);
+  font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-faint);display:flex;flex-wrap:wrap;gap:6px 12px}
+.status{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  padding:4px 9px;border-radius:999px;white-space:nowrap;border:1px solid currentColor}
+.status.open{color:var(--gap);background:rgba(244,112,122,.11)}
+.status.closing{color:var(--tierB);background:rgba(245,183,78,.11)}
+.status.closed{color:var(--tierA);background:rgba(63,214,160,.11)}
+.status.none{color:var(--ink-faint);background:rgba(255,255,255,.04)}
+.status.ctrl{color:var(--tierB);background:rgba(245,183,78,.11)}
+.status.tA{color:var(--tierA);background:rgba(63,214,160,.11)}
+.status.choke{color:var(--mat);background:rgba(185,140,240,.11)}
+
+/* ---------- drawer ---------- */
+.drawer{position:fixed;inset:0;background:rgba(4,7,13,.78);backdrop-filter:blur(4px);
+  display:flex;justify-content:flex-end;z-index:50}
+.drawer[hidden]{display:none}
+.sheet{background:var(--ground);width:min(700px,100%);height:100%;overflow-y:auto;border-left:1px solid var(--rule)}
+.sheet-hd{position:sticky;top:0;background:linear-gradient(180deg,var(--ground) 78%,rgba(8,13,22,0));
+  padding:22px 24px 16px;display:flex;justify-content:space-between;gap:14px;align-items:flex-start;z-index:2}
+.sheet-hd h2{font-size:34px;font-weight:700;line-height:1}
+.close{background:var(--card);border:1px solid var(--rule);color:var(--ink-dim);
+  font-family:'IBM Plex Mono',monospace;font-size:11px;padding:8px 13px;cursor:pointer;border-radius:999px}
+.close:hover{color:var(--ink);border-color:var(--accent)}
+.sheet-body{padding:0 24px 60px;display:flex;flex-direction:column;gap:13px}
+.blk{background:var(--card);border:1px solid var(--rule-soft);border-radius:var(--r);padding:17px 18px}
+.blk h3{font-size:14px;letter-spacing:.1em;color:var(--accent);font-weight:600;margin-bottom:12px}
+.kv{display:grid;grid-template-columns:112px 1fr;gap:9px 14px;font-size:13.3px;margin:0}
+.kv dt{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;
+  color:var(--ink-faint);text-transform:uppercase;padding-top:3px}
+.kv dd{margin:0;color:var(--ink)}
+.prow{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--rule-soft);font-size:13.2px}
+.prow:last-child{border-bottom:0;padding-bottom:0}
+.prow .pl{flex:0 0 42%;color:var(--ink)}
+.prow .pr{flex:1;color:var(--ink-dim);text-align:right}
+.tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;
+  padding:2px 7px;border-radius:999px;border:1px solid currentColor;text-transform:uppercase;margin-left:6px;white-space:nowrap}
+.tag.A{color:var(--tierA);background:rgba(63,214,160,.1)}
+.tag.B{color:var(--tierB);background:rgba(245,183,78,.1)}
+.tag.C{color:var(--mat);background:rgba(185,140,240,.1)}
+.tag.Z{color:var(--gap);background:rgba(244,112,122,.1)}
+.prow{display:block;padding:13px 0;border-bottom:1px solid var(--rule-soft)}
+.prow .ptop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.prow .pl{color:var(--ink);font-weight:500;flex:0 0 44%}
+.prow .pr{flex:1;color:var(--ink-dim);text-align:right;font-size:12.8px}
+.crit{margin-top:9px;padding-left:11px;border-left:2px solid var(--rule);display:flex;gap:9px;align-items:flex-start}
+.crit.c3{border-left-color:var(--gap)}
+.crit.c2{border-left-color:var(--tierB)}
+.crit.c1{border-left-color:var(--ink-faint)}
+.crit .clabel{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.11em;text-transform:uppercase;
+  padding:3px 7px;border-radius:999px;white-space:nowrap;flex:none;border:1px solid currentColor;margin-top:1px}
+.crit.c3 .clabel{color:var(--gap);background:rgba(244,112,122,.1)}
+.crit.c2 .clabel{color:var(--tierB);background:rgba(245,183,78,.1)}
+.crit.c1 .clabel{color:var(--ink-faint);background:rgba(255,255,255,.04)}
+.crit .cwhy{font-size:12.6px;color:var(--ink-dim);line-height:1.5}
+.critkey{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:13px;padding-bottom:12px;border-bottom:1px solid var(--rule-soft);
+  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+.critkey b{font-weight:500}
+.critkey i{font-style:normal;display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:5px}
+.pcount{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;
+  color:var(--ink-faint);text-transform:uppercase;font-weight:400;float:right;margin-top:2px}
+.tierbar{display:flex;height:6px;border-radius:999px;overflow:hidden;margin:2px 0 12px;background:var(--rule-soft)}
+.tierbar i{display:block}
+.tierbar i.A{background:var(--tierA)} .tierbar i.B{background:var(--tierB)}
+.tierbar i.C{background:var(--mat)} .tierbar i.Z{background:var(--gap)}
+.tierkey{display:flex;gap:13px;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:9px;
+  letter-spacing:.07em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:14px}
+.tierkey b{font-weight:500;color:var(--ink-dim)}
+.tierkey em{font-style:normal;display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:5px}
+.stand{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;
+  padding:2px 7px;border-radius:999px;border:1px solid currentColor;margin-left:6px;white-space:nowrap;display:inline-block}
+.stand.A{color:var(--tierA);background:rgba(63,214,160,.1)}
+.stand.B{color:var(--tierB);background:rgba(245,183,78,.1)}
+.stand.C{color:var(--mat);background:rgba(185,140,240,.1)}
+.stand.Z{color:var(--gap);background:rgba(244,112,122,.1)}
+.mkt{margin-top:8px;padding-left:11px;border-left:2px solid var(--rule-soft);font-size:12.4px;color:var(--ink-dim);line-height:1.5}
+.mkt .ml{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.11em;text-transform:uppercase;
+  padding:2px 7px;border-radius:999px;border:1px solid currentColor;margin-right:7px;white-space:nowrap;display:inline-block}
+.mkt .ml.M{color:#ff8a8a;background:rgba(255,138,138,.12)}
+.mkt .ml.D{color:var(--gap);background:rgba(244,112,122,.1)}
+.mkt .ml.O{color:var(--tierB);background:rgba(245,183,78,.1)}
+.mkt .ml.C{color:var(--tierA);background:rgba(63,214,160,.1)}
+.mkt .ent{display:block;margin-top:5px;color:var(--tierA);font-size:12.2px}
+.mkt .ent b{color:var(--ink);font-weight:500}
+.mkt .noent{display:block;margin-top:5px;color:var(--ink-faint);font-size:12px;font-style:italic}
+.gitem{padding:11px 0;border-bottom:1px solid var(--rule-soft)}
+.gitem:last-child{border-bottom:0;padding-bottom:0}
+.gitem .gt{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:5px}
+.gitem b{font-size:13.5px}
+.note{font-size:13.2px;color:var(--ink-dim);margin:0}
+
+/* ---------- results ---------- */
+.lede{max-width:70ch;color:var(--ink-dim);margin:0 0 20px;font-size:14.5px}
+.lede b{color:var(--ink);font-weight:600}
+mark{background:rgba(116,169,255,.28);color:var(--ink);border-radius:3px;padding:0 3px}
+.resgrp{margin-bottom:32px}
+.resgrp h3{font-size:16px;letter-spacing:.09em;color:var(--accent);font-weight:600;margin-bottom:13px;
+  display:flex;justify-content:space-between;align-items:baseline}
+.resgrp h3 span{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-faint);letter-spacing:.08em}
+.empty{background:var(--card);border:1px solid var(--rule-soft);border-radius:var(--r);
+  padding:28px;color:var(--ink-dim);font-size:13.5px;max-width:64ch}
+
+footer{border-top:1px solid var(--rule-soft);padding:26px 0 50px;margin-top:10px;
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink-faint);letter-spacing:.04em;line-height:1.9}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}
+  .card:hover,button.icard:hover{transform:none}}
+@media (max-width:620px){
+  .kv{grid-template-columns:1fr;gap:2px 0}
+  .kv dd{margin-bottom:9px}
+  .prow{flex-direction:column;gap:3px}
+  .prow .pl,.prow .pr{flex:none;text-align:left}
+  .grid,.grid.wide{grid-template-columns:1fr}
+}
+</style>
+
+<div class="shell">
+<header>
+  <div class="eyebrow">Industrial capability audit &middot; compiled August 2026</div>
+  <h1>India<br>Capability<br>Ledger</h1>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--ink-faint);margin-top:6px"><span id="buildstamp">__BUILD_STAMP__</span> &middot; 257 incumbents &middot; 2,271 lines &middot; 87 core technologies</div>
+  <p class="thesis">Every company reviewed in this thread, mapped against who in India actually competes &mdash; <b>Indian-owned or Indian-IP only</b>. Exchange listing doesn't count. The bar on each card marks how deep into the value chain India reaches: <b>material, component, or system</b>. Read across all of them and one pattern dominates.</p>
+  <div class="counters" id="counters"></div>
+</header>
+
+<div class="searchbar">
+  <input type="search" id="gq" placeholder="Search anything &mdash; company, Indian firm, gap, startup, chokepoint&hellip;" aria-label="Search everything">
+  <button class="clear" id="clearQ" hidden>Clear</button>
+  <span class="hint">Try: Netweb &middot; compressors &middot; Prasa &middot; tungsten &middot; CBTC</span>
+</div>
+
+<nav role="tablist">
+  <button class="tab" role="tab" aria-selected="true" data-view="industries">Industries</button>
+  <button class="tab" role="tab" aria-selected="false" data-view="companies">Companies</button>
+  <button class="tab" role="tab" aria-selected="false" data-view="gaps">Gap register</button>
+  <button class="tab" role="tab" aria-selected="false" data-view="champions">Indian champions</button>
+  <button class="tab" role="tab" aria-selected="false" data-view="traps">Tier B traps</button>
+  <button class="tab" role="tab" aria-selected="false" data-view="mittelstand">Mittelstand</button>
+  <button class="tab" role="tab" aria-selected="false" data-view="keiretsu">Keiretsu</button>
+  <button class="tab" role="tab" aria-selected="false" data-view="chaebol">Chaebol</button>
+  <button class="tab" role="tab" aria-selected="false" data-view="builders">Could build it</button>
+  <button class="tab" role="tab" aria-selected="false" data-view="chokes">Chokepoints</button>
+  <button class="tab" role="tab" aria-selected="false" data-view="techs">Core technologies</button>
+  <button class="tab" role="tab" aria-selected="false" data-view="regions">Regions</button>
+  <button class="tab" role="tab" aria-selected="false" data-view="india">Indian manufacturing</button>
+  <button class="tab" role="tab" aria-selected="false" data-view="results" id="tabAll" hidden>All matches</button>
+</nav>
+
+<main>
+  <section id="detailLayer" hidden>
+    <nav class="crumbs" id="crumbs"></nav>
+    <div id="detailBody"></div>
+  </section>
+
+  <section class="view" id="view-industries">
+    <p class="lede">Twenty-five industries, each scored on the same basis. Scope is manufacturing, design, equipment, construction, heavy engineering, electronics and machines &mdash; financial services and agricultural inputs are deliberately out. Pick one to open it. Every card in the dashboard now opens its own window, and the breadcrumb keeps the trail &mdash; incumbents, chokepoints, gaps, Indian champions and the firms that could build what's missing. The headline number on each card is the share of <b>critical</b> lines India holds, which is the measure that actually separates them.</p>
+    <div class="controls">
+      <span class="count" id="countind"></span>
+      <button class="chip" id="sortCrit" aria-pressed="true">Sort by weakest</button>
+      <button class="chip" id="sortSize" aria-pressed="false">Sort by size</button>
+    </div>
+    <div class="grid wide" id="indgrid"></div>
+  </section>
+
+  <section class="view" id="view-companies" hidden>
+    <p class="lede">Every foreign incumbent in the ledger. Each card carries its own tier split &mdash; how many of its product lines India competes on with its own IP, how many are held by foreign-controlled Indian entities, how many are Indian-owned on foreign technology, and how many have no Indian presence at all. Open a card to see those lines grouped by tier.</p>
+    <div class="controls">
+      <span class="count" id="count"></span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="view" id="view-gaps" hidden>
+    <p class="lede">Product lines where India has <b>no Tier A presence</b>, with whoever is actually attempting entry. Status is about the attempt, not the ambition: <b>closing</b> means someone is shipping or building; <b>open</b> means nobody credible has started. Click a card to open the incumbent's full entry.</p>
+    <div class="controls"><span class="count" id="countg"></span></div>
+    <div class="grid wide" id="gapgrid"></div>
+  </section>
+
+  <section class="view" id="view-champions" hidden>
+    <p class="lede">Indian firms that meet the test &mdash; <b>Indian-owned with Indian IP</b> &mdash; and genuinely compete with the incumbent named. Not assemblers, not licensees, not Indian-listed subsidiaries.</p>
+    <div class="controls"><span class="count" id="countc"></span></div>
+    <div class="grid wide" id="champgrid"></div>
+  </section>
+
+  <section class="view" id="view-traps" hidden>
+    <p class="lede">Companies that read as Indian &mdash; Indian-listed, Indian-branded, Indian-founded, Make-in-India positioning &mdash; but are <b>foreign-controlled</b>. Counting these as domestic capability overstates India's position.</p>
+    <div class="controls"><span class="count" id="countt"></span></div>
+    <div class="grid wide" id="trapgrid"></div>
+  </section>
+
+  <section class="view" id="view-chokes" hidden>
+    <p class="lede">Dependencies that appeared in <b>more than one</b> company's analysis. These are the inputs India buys continuously and cannot substitute &mdash; the ones that constrain what India can make with what it already has.</p>
+    <div class="controls">
+      <select id="indK" aria-label="Filter by industry"></select>
+      <span class="count" id="countk"></span>
+    </div>
+    <div class="grid wide" id="chokegrid"></div>
+  </section>
+
+  <section class="view" id="view-techs" hidden>
+    <p class="lede">Every chokepoint in the ledger, restated as <b>the specific technology that is actually hard</b> &mdash; not the product category. A chokepoint called &ldquo;EDA software&rdquo; is really timing-closure engines certified by a foundry; one called &ldquo;rare-earth magnets&rdquo; is really grain-boundary diffusion of dysprosium. The distinction decides what a response would have to look like, so each entry is classed by <b>what kind of hard thing it is</b>. Pick a class to filter, or open any card for what it is, why it is hard and where India actually stands.</p>
+    <div class="controls">
+      <select id="indT" aria-label="Filter by industry"></select>
+      <span class="count" id="countT"></span>
+    </div>
+    <div class="chips" id="clschips" style="margin:0 0 20px"></div>
+    <div class="grid wide" id="techgrid"></div>
+  </section>
+
+  <section class="view" id="view-mittelstand" hidden>
+    <p class="lede">The companies that actually hold the chokepoints. Most are <b>family-owned, unlisted and under a few thousand people</b> &mdash; average hidden champion headcount is around 500, with export share near 64%. India's gap against them is focus and time, not capital. Each card lists every product line and, where India is absent, <b>the Indian firm with the adjacent capability to build it</b>.</p>
+    <div class="controls"><span class="count" id="countm"></span></div>
+    <div class="grid" id="mitgrid"></div>
+  </section>
+
+  <section class="view" id="view-keiretsu" hidden>
+    <p class="lede">The zaibatsu were dissolved in 1945-47 and reassembled as <b>keiretsu</b> &mdash; cross-shareholdings, a presidents' council, a main bank and a general trading house. India's business houses are structurally closer to this model than to anything else in the ledger. Toyota Industries' 2026 buyout is now unwinding the cross-holdings for a <b>&yen;4.43 trillion book gain</b>, just as the model becomes most instructive.</p>
+    <div class="controls"><span class="count" id="countk2"></span></div>
+    <div class="grid" id="keigrid"></div>
+
+    <h3 style="font-size:16px;letter-spacing:.09em;color:var(--accent);margin:36px 0 8px">The Indian mirror</h3>
+    <p class="lede">India already has the zaibatsu form &mdash; it is called the business house. Two of the missing mechanisms are deliberate policy choices rather than failures.</p>
+    <div class="grid wide" id="mirrorgrid"></div>
+  </section>
+
+  <section class="view" id="view-chaebol" hidden>
+    <p class="lede">Korea's family-controlled groups, and the most concentrated industrial model in the ledger. <b>92 chaebols operate in South Korea; the top four generate 40.8% of GDP and the top thirty reach 76.9%.</b> The five largest listed groups account for more than half the country's stock market value. Samsung Electronics, LG Electronics, SK hynix, POSCO and HD Hyundai already have their own cards — these are the group-level entries covering everything else.</p>
+    <div class="controls"><span class="count" id="countce"></span></div>
+    <div class="grid" id="chaegrid"></div>
+  </section>
+
+  <section class="view" id="view-builders" hidden>
+    <p class="lede">Indian firms that already hold the R&amp;D, the IP or the parallel technology to make something the ledger records as missing. <b>Each card is tagged by what is actually stopping it</b> &mdash; because the response to each is different. <b><span id="bDec">&mdash;</span> of the <span id="bTot">&mdash;</span> are stopped by a decision alone</b>: the technology is in hand, here or in an immediately adjacent application, and a commercial choice or an unplaced order stands in the way. <span id="bTech">&mdash;</span> are genuine technology gaps, <span id="bCap">&mdash;</span> want a plant nobody has funded, and <span id="bQual">&mdash;</span> are waiting on a certification. Filter below.</p>
+    <div class="controls">
+      <select id="indB" aria-label="Filter by industry"></select>
+      <span class="count" id="countb"></span>
+    </div>
+    <div class="chips" id="barchips" style="margin:0 0 20px"></div>
+    <div class="grid wide" id="buildgrid"></div>
+    <h3 style="font-size:16px;letter-spacing:.09em;color:var(--accent);margin:34px 0 8px">Second-tier chokepoint holders</h3>
+    <p class="lede"><span id="secN">&mdash;</span> more firms holding narrower positions — mostly German, mostly family-owned, mostly invisible. Each entry sets out what the company is, why the position is defensible, where India stands and which Indian firm holds the nearest adjacent capability.</p>
+    <div class="grid wide" id="secondgrid"></div>
+  </section>
+
+  <section class="view" id="view-regions" hidden>
+    <p class="lede">Three industrial bases &mdash; <b>North America</b>, <b>Europe</b>, <b>East Asia</b> &mdash; each read against India. Pick one to open it: it drills into its countries ranked weakest first, the industries it sits in, the chokepoints anchored there and every incumbent inside it. India's own position has its own tab.</p>
+    <div class="grid wide" id="regiongrid"></div>
+
+    <h3 style="font-size:16px;letter-spacing:.09em;color:var(--accent);margin:36px 0 8px">Cross-cut: giants versus niche firms</h3>
+    <p class="lede">A second cut of the same incumbents, split by company type rather than geography. India does best against large diversified corporations, which present many ordinary fronts, and worst against single-specialisation firms, which present none.</p>
+    <div class="grid wide" id="modelsplitgrid"></div>
+
+    <h3 style="font-size:16px;letter-spacing:.09em;color:var(--accent);margin:36px 0 8px">Company league — weakest to strongest</h3>
+    <p class="lede">Every incumbent ranked by the share of its product lines India competes on. Use the region and industry filters above to narrow it.</p>
+    <div class="controls"><span class="count" id="countrk"></span></div>
+    <div class="wrap" style="border:1px solid var(--rule-soft);border-radius:var(--r);overflow:hidden">
+      <table class="tbl" id="ranktbl"></table>
+    </div>
+
+    <h3 style="font-size:16px;letter-spacing:.09em;color:var(--accent);margin:36px 0 8px">Monopoly &amp; duopoly lines by region</h3>
+    <p class="lede">Every single- and dual-supplier line in the ledger, grouped by where the holder sits.</p>
+    <div class="grid wide" id="monogrid"></div>
+  </section>
+
+  <section class="view" id="view-india" hidden>
+    <p class="lede">India read back against everything in the ledger. <b>~17% of GDP, targeting 25% by 2035</b>, on a base of <b>7.47 crore MSMEs contributing 35.4% of manufacturing output and 48.58% of exports</b>. Medium and high-technology industries now account for <b>46.3% of manufacturing value added</b> &mdash; the shift is real. What follows is where that base actually lands across 1,148 product lines.</p>
+    <div class="counters" id="indiaCounters"></div>
+
+    <h3 style="font-size:16px;letter-spacing:.09em;color:var(--accent);margin:34px 0 8px">The Indian model, against the other three</h3>
+    <p class="lede">Germany builds niche depth, Japan builds supplier pyramids, France builds state-anchored champions. India has two of the mechanisms and lacks four.</p>
+    <div class="grid wide" id="modelgrid"></div>
+
+    <h3 style="font-size:16px;letter-spacing:.09em;color:var(--accent);margin:34px 0 8px">Which Indian firms carry the ledger</h3>
+    <p class="lede">Counted from the named Indian competitor on each of the 1,148 lines &mdash; how many lines a firm appears on, across how many foreign incumbents, and how many of those lines are rated <b>critical</b>.</p>
+    <div class="controls"><span class="count" id="countl"></span></div>
+    <div class="wrap" style="border:1px solid var(--rule-soft);border-radius:var(--r);overflow:hidden">
+      <table class="tbl" id="leaguetbl"></table>
+    </div>
+
+    <h3 style="font-size:16px;letter-spacing:.09em;color:var(--accent);margin:34px 0 8px">Where India stands, sector by sector</h3>
+    <p class="lede">Every product line grouped by the incumbent's sector, split by India's actual position.</p>
+    <div class="grid wide" id="sectorgrid"></div>
+  </section>
+
+  <section class="view" id="view-results" hidden>
+    <p class="lede" id="resLede"></p>
+    <div id="resBody"></div>
+  </section>
+</main>
+
+<footer id="foot"></footer>
+</div>
+
+<div class="drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="sheetName">
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+
